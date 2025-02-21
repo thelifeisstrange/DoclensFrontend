@@ -36,7 +36,7 @@ const EducationSection = ({ title, formData, schoolField, percentageField, fileF
           file={formData[fileField]}
           verified={formData[verifiedField]}
           handleInputChange={handleInputChange}
-          handleVerify={() => handleVerify(verifiedField)}
+          handleVerify={handleVerify}
         />
       </div>
     </div>
@@ -54,7 +54,7 @@ const EducationalDetails = ({ formData, handleInputChange, handleVerify }) => {
         fileField="class10Marksheet"
         verifiedField="class10Verified"
         handleInputChange={handleInputChange}
-        handleVerify={handleVerify}
+        handleVerify={() => handleVerify('x')}
       />
 
       <EducationSection
@@ -65,7 +65,7 @@ const EducationalDetails = ({ formData, handleInputChange, handleVerify }) => {
         fileField="class12Marksheet"
         verifiedField="class12Verified"
         handleInputChange={handleInputChange}
-        handleVerify={handleVerify}
+        handleVerify={() => handleVerify('xii')}
       />
 
       <EducationSection
@@ -76,7 +76,7 @@ const EducationalDetails = ({ formData, handleInputChange, handleVerify }) => {
         fileField="bachelorsMarksheet"
         verifiedField="bachelorsVerified"
         handleInputChange={handleInputChange}
-        handleVerify={handleVerify}
+        handleVerify={() => handleVerify('b')}
       />
     </div>
   );

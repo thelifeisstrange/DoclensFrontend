@@ -27,22 +27,26 @@ const ApplicationForm = () => {
     dob: '',
     adhaar: '',
     adhaarFile: null,
+    adhaarLink:null,
     adhaarVerified: false,
     
     // Educational Details
     class10School: '',
     class10Percentage: '',
     class10Marksheet: null,
+    class10Link: false,
     class10Verified: false,
     
     class12College: '',
     class12Percentage: '',
     class12Marksheet: null,
+    class12Link: null,
     class12Verified: false,
     
     bachelorsUniversity: '',
     bachelorsPercentage: '',
     bachelorsMarksheet: null,
+    bachelorsLink: null,
     bachelorsVerified: false
   });
 
@@ -54,13 +58,13 @@ const ApplicationForm = () => {
   //   }));
   // };
 
-  const handleInputChange = (e, documentType) => {
+  const handleInputChange = (e) => {
     const { name, value, files } = e.target;
     
-    if (files) {
-      console.log(`Uploading document type: ${documentType}`);
-      // You can perform document-specific validation here
-    }
+    // if (files) {
+    //   console.log(`Uploading document type: ${documentType}`);
+    //   // You can perform document-specific validation here
+    // }
 
     setFormData(prev => ({
       ...prev,
@@ -69,57 +73,53 @@ const ApplicationForm = () => {
   };
 
   const handleVerify = (documentType) => {
-    console.log(`Verifying document type: ${documentType}`);
+    // console.log(`Verifying document type: ${documentType}`);
     
-    // Map document types to their corresponding verification fields
-    const verificationFields = {
-      'adhaar': 'adhaarVerified',
-      'class10': 'class10Verified',
-      'class12': 'class12Verified',
-      'bachelors': 'bachelorsVerified'
-    };
+    // // Map document types to their corresponding verification fields
+    // const verificationFields = {
+    //   'adhaar': 'adhaarVerified',
+    //   'class10': 'class10Verified',
+    //   'class12': 'class12Verified',
+    //   'bachelors': 'bachelorsVerified'
+    // };
 
-    // Map document types to their corresponding file fields
-    const fileFields = {
-      'adhaar': 'adhaarFile',
-      'class10': 'class10Marksheet',
-      'class12': 'class12Marksheet',
-      'bachelors': 'bachelorsMarksheet'
-    };
+    // // Map document types to their corresponding file fields
+    // const fileFields = {
+    //   'adhaar': 'adhaarFile',
+    //   'class10': 'class10Marksheet',
+    //   'class12': 'class12Marksheet',
+    //   'bachelors': 'bachelorsMarksheet'
+    // };
 
-    const verificationField = verificationFields[documentType];
-    const fileField = fileFields[documentType];
+    // const verificationField = verificationFields[documentType];
+    // const fileField = fileFields[documentType];
 
-    // Check if file exists before verification
-    if (formData[fileField]) {
-      // Here you can add specific verification logic for each document type
-      // For example:
       switch (documentType) {
         case 'adhaar':
           // Verify Adhaar specific format/details
-          console.log('Verifying Adhaar document...');
+
+          console.log('Verifying Adhaar document...',formData.adhaarFile);
           break;
-        case 'class10':
+        case 'x':
           // Verify Class X marksheet format/details
           console.log('Verifying Class X marksheet...');
           break;
-        case 'class12':
+        case 'xii':
           // Verify Class XII marksheet format/details
           console.log('Verifying Class XII marksheet...');
           break;
-        case 'bachelors':
+        case 'b':
           // Verify Bachelors marksheet format/details
-          console.log('Verifying Bachelors marksheet...');
+          console.log('Verifying Bachelors marksheet...', formData.bachelorsMarksheet);
           break;
         default:
-          console.log('Unknown document type');
+          console.log('Unknown document type',documentType);
       }
 
-      setFormData(prev => ({
-        ...prev,
-        [verificationField]: true
-      }));
-    }
+      // setFormData(prev => ({
+      //   ...prev,
+      //   [verificationField]: true
+      // }));
   };
 
   return (

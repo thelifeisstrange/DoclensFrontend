@@ -83,7 +83,7 @@ const PersonalDetails = ({ formData, handleInputChange, handleVerify }) => {
             file={formData.adhaarFile}
             verified={formData.adhaarVerified}
             handleInputChange={handleInputChange}
-            handleVerify={() => handleVerify('adhaarVerified')}
+            handleVerify={() => handleVerify('adhaar')}
           />
         </div>
       </div>
