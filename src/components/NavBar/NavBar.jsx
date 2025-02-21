@@ -5,8 +5,7 @@ const NavBar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <img src={logo} alt="DRDO Careers Logo" className="logo-img" />
-        <div className="navbar-title">DRDO Careers</div>
+        <div className="navbar-title">DocLens</div>
       </div>
       <div className="navbar-links">
         <button className="logout-button">Logout</button>
