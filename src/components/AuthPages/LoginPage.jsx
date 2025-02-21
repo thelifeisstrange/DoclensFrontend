@@ -17,10 +17,17 @@ const LoginPage = () => {
   return (
     <div className="container">
       <div className="card animate-fade-in">
-        <h2 className="preview-title" style={{ textAlign: 'center' }}>
+        <h2 className="preview-title" style={{ textAlign: "center" }}>
           Login
         </h2>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "2rem",
+            flexDirection: "column",
+          }}
+        >
           <div className="form-group">
             <label className="form-label">Email</label>
             <input
@@ -44,13 +51,13 @@ const LoginPage = () => {
               placeholder="Enter your Password"
             />
           </div>
-          <button 
-              className="button button-primary" 
-              onClick={() => console.log('Form submitted:', formData)} 
-              style={{ marginLeft: 'auto' }}
-            >
-              Submit Application
-            </button>
+          <button
+            className="button button-primary"
+            onClick={() => console.log("Form submitted:", formData)}
+            style={{ margin: "auto" }}
+          >
+            Login
+          </button>
         </div>
       </div>
     </div>

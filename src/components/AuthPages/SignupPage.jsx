@@ -20,7 +20,7 @@ const SignupPage = () => {
         <h2 className="preview-title" style={{ textAlign: 'center' }}>
           Signup
         </h2>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem',flexDirection:"column" }}>
           <div className="form-group">
             <label className="form-label">Email</label>
             <input
@@ -58,9 +58,9 @@ const SignupPage = () => {
           <button 
               className="button button-primary" 
               onClick={() => console.log('Form submitted:', formData)} 
-              style={{ marginLeft: 'auto' }}
+              style={{ margin: 'auto' }}
             >
-              Submit Application
+              Signup
             </button>
         </div>
       </div>
