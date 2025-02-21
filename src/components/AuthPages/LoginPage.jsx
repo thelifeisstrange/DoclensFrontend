@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Link } from "react-router";
+
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: ''
+    email: '',
+    password: ''
   });
 
   const handleInputChange = (e) => {
@@ -58,6 +60,8 @@ const LoginPage = () => {
           >
             Login
           </button>
+          <label className="redirect">New Here? <Link to="/signup">Signup</Link>
+          </label>
         </div>
       </div>
     </div>
