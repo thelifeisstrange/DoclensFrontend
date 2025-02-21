@@ -46,19 +46,80 @@ const ApplicationForm = () => {
     bachelorsVerified: false
   });
 
-  const handleInputChange = (e) => {
+  // const handleInputChange = (e) => {
+  //   const { name, value, files } = e.target;
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     [name]: files ? files[0] : value
+  //   }));
+  // };
+
+  const handleInputChange = (e, documentType) => {
     const { name, value, files } = e.target;
+    
+    if (files) {
+      console.log(`Uploading document type: ${documentType}`);
+      // You can perform document-specific validation here
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: files ? files[0] : value
     }));
   };
 
-  const handleVerify = (fieldName) => {
-    setFormData(prev => ({
-      ...prev,
-      [fieldName]: true
-    }));
+  const handleVerify = (documentType) => {
+    console.log(`Verifying document type: ${documentType}`);
+    
+    // Map document types to their corresponding verification fields
+    const verificationFields = {
+      'adhaar': 'adhaarVerified',
+      'class10': 'class10Verified',
+      'class12': 'class12Verified',
+      'bachelors': 'bachelorsVerified'
+    };
+
+    // Map document types to their corresponding file fields
+    const fileFields = {
+      'adhaar': 'adhaarFile',
+      'class10': 'class10Marksheet',
+      'class12': 'class12Marksheet',
+      'bachelors': 'bachelorsMarksheet'
+    };
+
+    const verificationField = verificationFields[documentType];
+    const fileField = fileFields[documentType];
+
+    // Check if file exists before verification
+    if (formData[fileField]) {
+      // Here you can add specific verification logic for each document type
+      // For example:
+      switch (documentType) {
+        case 'adhaar':
+          // Verify Adhaar specific format/details
+          console.log('Verifying Adhaar document...');
+          break;
+        case 'class10':
+          // Verify Class X marksheet format/details
+          console.log('Verifying Class X marksheet...');
+          break;
+        case 'class12':
+          // Verify Class XII marksheet format/details
+          console.log('Verifying Class XII marksheet...');
+          break;
+        case 'bachelors':
+          // Verify Bachelors marksheet format/details
+          console.log('Verifying Bachelors marksheet...');
+          break;
+        default:
+          console.log('Unknown document type');
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        [verificationField]: true
+      }));
+    }
   };
 
   return (
