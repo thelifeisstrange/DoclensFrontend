@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +18,7 @@ const SignupPage = () => {
       [name]: value
     });
   };
+
 
   return (
     <div className="container">
@@ -60,7 +63,7 @@ const SignupPage = () => {
           </div>
           <button 
               className="button button-primary" 
-              onClick={() => console.log('Form submitted:', formData)} 
+              onClick={(handleSignup)} 
               style={{ margin: 'auto' }}
             >
               Signup
@@ -69,6 +72,18 @@ const SignupPage = () => {
           </label>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
