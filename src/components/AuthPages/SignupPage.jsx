@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -21,24 +22,42 @@ const SignupPage = () => {
 
   const handleSignup = async(e) =>{
     e.preventDefault()
+    if(formData.email==='' || formData.password==='' || formData.cpassword===''){
+      toast.error('fields cannot be empty')
+    }
     if(formData.password!==formData.cpassword){
       toast.error('Both password must be same')
     }
     const email = formData.email
     const password = formData.password
     try {
-      const response = await fetch('http://localhost:8000/auth/login/', {
+      const response = await fetch('http://localhost:8000/auth/signup/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({email,password}),
       });
       const data = await response.json();
-      setLoginResponse(data);
+      if(response.ok){
+        localStorage.setItem('authToken',data.access)
+        localStorage.setItem('refreshToken',data.refresh)
+        localStorage.setItem('role',data.role)
+        navigate('/')
+      }
+      else{
+        toast.error(data.error)
+      }
     } catch (error) {
-      console.error('Error during login:', error);
+      toast.error('Error during signup:', error);
     }
   }
 
+  useEffect(() => {
+      const token = localStorage.getItem("authToken");
+  
+      if (token) {
+        navigate("/");
+      }
+    }, []);
   return (
     <div className="container">
       <div className="card animate-fade-in">
