@@ -19,6 +19,25 @@ const SignupPage = () => {
     });
   };
 
+  const handleSignup = async(e) =>{
+    e.preventDefault()
+    if(formData.password!==formData.cpassword){
+      toast.error('Both password must be same')
+    }
+    const email = formData.email
+    const password = formData.password
+    try {
+      const response = await fetch('http://localhost:8000/auth/login/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({email,password}),
+      });
+      const data = await response.json();
+      setLoginResponse(data);
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+  }
 
   return (
     <div className="container">
@@ -63,7 +82,7 @@ const SignupPage = () => {
           </div>
           <button 
               className="button button-primary" 
-              onClick={(handleSignup)} 
+              onClick={handleSignup} 
               style={{ margin: 'auto' }}
             >
               Signup
