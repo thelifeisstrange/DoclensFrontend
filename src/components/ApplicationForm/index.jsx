@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PersonalDetails from './PersonalDetails';
 import EducationalDetails from './EducationalDetails';
 import PreviewReport from './PreviewReport';
 import NavBar from '../NavBar/NavBar';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ApplicationForm = () => {
   const [step, setStep] = useState(1);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     // Personal Details
     name: '',
