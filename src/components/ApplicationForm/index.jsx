@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PersonalDetails from './PersonalDetails';
 import EducationalDetails from './EducationalDetails';
 import PreviewReport from './PreviewReport';
+import NavBar from '../NavBar/NavBar';
 
 const ApplicationForm = () => {
   const [step, setStep] = useState(1);
@@ -50,6 +51,7 @@ const ApplicationForm = () => {
 
   return (
     <div className="container">
+      <NavBar />
       <div className="card animate-fade-in">
         <div className="steps">
           {[1, 2, 3].map((s) => (
