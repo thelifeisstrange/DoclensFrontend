@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import profilepic from '../../assets/Logo/drdo_round_logo.jpg'; // Corrected relative path
-import './NavBar.css'; // CSS file is in the same folder
+import profilepic from '../../assets/Logo/drdo_round_logo.jpg';
+import './NavBar.css';
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
