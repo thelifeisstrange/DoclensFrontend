@@ -58,7 +58,8 @@ const ApplicationForm = () => {
   //   }));
   // };
 
-  const handleInputChange = (e) => {
+  const 
+  handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
     // if (files) {
@@ -168,7 +169,7 @@ const ApplicationForm = () => {
         break;
       case "xii":
         // Verify Class XII marksheet format/details
-        file.append("image", formData.adhaarFile); // Append the file with the key 'image'
+        file.append("image", formData.class12Marksheet); // Append the file with the key 'image'
         try {
           const response = await fetch(
             "http://127.0.0.1:8000/verification/upload-image/",
@@ -203,7 +204,7 @@ const ApplicationForm = () => {
         break;
       case "b":
         // Verify Bachelors marksheet format/details
-        file.append("image", formData.adhaarFile); // Append the file with the key 'image'
+        file.append("image", formData.bachelorsMarksheet); // Append the file with the key 'image'
         try {
           const response = await fetch(
             "http://127.0.0.1:8000/verification/upload-image/",
