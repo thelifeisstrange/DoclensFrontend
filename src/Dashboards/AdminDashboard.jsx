@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './admin-dashboard.css';
 
-// Custom Components (Table, Card, etc. remain the same)
+// Custom Table Component
 const Table = ({ children }) => (
   <table className="admin-table">
     {children}
   </table>
 );
 
+// Custom Card Components
 const Card = ({ children }) => (
   <div className="admin-card">
     {children}
@@ -32,6 +33,7 @@ const CardContent = ({ children }) => (
   </div>
 );
 
+// Custom Badge Component
 const Badge = ({ children, variant }) => {
   const badgeClass = variant === 'success' ? 'badge-success' : 'badge-error';
   return (
@@ -41,36 +43,8 @@ const Badge = ({ children, variant }) => {
   );
 };
 
-// Preview Modal Component
-const PreviewModal = ({ application, onClose }) => {
-  if (!application) return null;
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
-          <h3>Application Preview</h3>
-          <button className="close-button" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-content">
-          <h4>Personal Details</h4>
-          <p>Name: {application.name}</p>
-          <p>Email: {application.email}</p>
-          <p>Verification Status: {application.personalVerification ? "Verified" : "Not Verified"}</p>
-          
-          <h4>Educational Details</h4>
-          <p>Class 10: {application.educationalVerification.class10 ? "Verified" : "Not Verified"}</p>
-          <p>Class 12: {application.educationalVerification.class12 ? "Verified" : "Not Verified"}</p>
-          <p>Bachelors: {application.educationalVerification.bachelors ? "Verified" : "Not Verified"}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const AdminDashboard = () => {
   const [applications, setApplications] = useState([]);
-  const [selectedApplication, setSelectedApplication] = useState(null);
 
   useEffect(() => {
     // Simulated API response
@@ -102,15 +76,13 @@ const AdminDashboard = () => {
     setApplications(mockData);
   }, []);
 
-  const getTotalVerificationScore = (app) => {
-    const educationalVerified = Object.values(app.educationalVerification).filter(v => v).length;
-    const personalVerified = app.personalVerification ? 1 : 0;
-    const total = educationalVerified + personalVerified;
-    return `${total}/4`;
+  const getEducationalScore = (verifications) => {
+    const verified = Object.values(verifications).filter(v => v).length;
+    return `${verified}/3`;
   };
 
   return (
-    <div className="admin">
+    <div className="admin-dashboard">
       <Card>
         <CardHeader>
           <CardTitle>Form Responses</CardTitle>
@@ -123,8 +95,8 @@ const AdminDashboard = () => {
                   <th>Sr. No</th>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Verification Status</th>
-                  <th>Preview</th>
+                  <th>Personal Details</th>
+                  <th>Educational Details</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,22 +106,19 @@ const AdminDashboard = () => {
                     <td>{app.name}</td>
                     <td>{app.email}</td>
                     <td>
+                      <Badge variant={app.personalVerification ? "success" : "error"}>
+                        {app.personalVerification ? "1/1" : "0/1"}
+                      </Badge>
+                    </td>
+                    <td>
                       <Badge 
-                        variant={getTotalVerificationScore(app) === "4/4" 
+                        variant={getEducationalScore(app.educationalVerification) === "3/3" 
                           ? "success" 
                           : "error"
                         }
                       >
-                        {getTotalVerificationScore(app)}
+                        {getEducationalScore(app.educationalVerification)}
                       </Badge>
-                    </td>
-                    <td>
-                      <button 
-                        className="preview-button"
-                        onClick={() => setSelectedApplication(app)}
-                      >
-                        Preview
-                      </button>
                     </td>
                   </tr>
                 ))}
@@ -158,13 +127,6 @@ const AdminDashboard = () => {
           </div>
         </CardContent>
       </Card>
-
-      {selectedApplication && (
-        <PreviewModal 
-          application={selectedApplication}
-          onClose={() => setSelectedApplication(null)}
-        />
-      )}
     </div>
   );
 };
