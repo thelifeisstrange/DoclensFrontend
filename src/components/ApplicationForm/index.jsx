@@ -97,6 +97,8 @@ const ApplicationForm = () => {
     // const fileField = fileFields[documentType];
     const file = new FormData();
 
+    
+
     switch (documentType) {
       case "adhaar":
         // Verify Adhaar specific format/details
@@ -124,14 +126,14 @@ const ApplicationForm = () => {
         const d = await res.json();
         console.log(d.result['name'])
         console.log(d.result['adhaar_number'])
-        if (!d.result['name']&& d.result['adhaar_number']) {
-          toast.error("Name and number verification failed");
+        if (d.result['name'] ==false && d.result['adhaar_number']==false) {
+          toast.error("Name and adhaar number verification failed");
         }
-        else if (!formData.name) {
+        else if (d.result['name']==false) {
           toast.error("Name verification failed");
         }
-        else if (!formData.adhaar) {
-          toast.error("Number verification failed");
+        else if (d.result['adhaar_number']==false) {
+          toast.error("Adhaar Number verification failed");
         }
         else{
           toast.success("Adhaar verification successful");
@@ -173,13 +175,15 @@ const ApplicationForm = () => {
             }
           );;
           const d = await res.json();
-          if (!d.verified.name && !d.verified.percentage) {
+          console.log(d.result['name'])
+          console.log(d.result['percentage']);
+          if (d.result['name']==false && d.result['percentage']==false) {
             toast.error("Name and percentage verification failed");
           }
-          else if (!d.verified.name) {
+          else if (d.result['name']==false) {
             toast.error("Name verification failed");
           }
-          else if(!d.verified.percentage) {
+          else if(d.result['percentage']==false) {
             toast.error("Percentage verification failed");
           }
           setFormData((prev) => ({
@@ -217,8 +221,16 @@ const ApplicationForm = () => {
             }
           );
           const d = await res.json();
-          if (!d.verified) {
-            alert("Class X marksheet verification failed. Please check the details and try again.");
+          console.log(d.result['name'])
+          console.log(d.result['percentage']);
+          if (d.result['name']==false && d.result['percentage']==false) {
+            toast.error("Name and percentage verification failed");
+          }
+          else if (d.result['name']==false) {
+            toast.error("Name verification failed");
+          }
+          else if(d.result['percentage']==false) {
+            toast.error("Percentage verification failed");
           }
           setFormData((prev) => ({
             ...prev,
@@ -254,8 +266,16 @@ const ApplicationForm = () => {
             }
           );
           const d = await res.json();
-          if (!d.verified) {
-            alert("bachlores result verfication failed. Please check the details and try again.");
+          console.log(d.result['name'])
+          console.log(d.result['percentage']);
+          if (d.result['name']==false && d.result['percentage']==false) {
+            toast.error("Name and percentage verification failed");
+          }
+          else if (d.result['name']==false) {
+            toast.error("Name verification failed");
+          }
+          else if(d.result['percentage']==false) {
+            toast.error("Percentage verification failed");
           }
           setFormData((prev) => ({
             ...prev,
@@ -269,6 +289,7 @@ const ApplicationForm = () => {
       default:
         console.log("Unknown document type", documentType);
     }
+    
 
     // setFormData(prev => ({
     //   ...prev,
