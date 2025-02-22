@@ -7,6 +7,7 @@ import LoginPage from "./components/AuthPages/LoginPage";
 import SignupPage from "./components/AuthPages/SignupPage";
 import NavBar from "./components/NavBar/NavBar";
 import { ToastContainer } from "react-toastify";
+import AdminDashboard from "./Dashboards/AdminDashboard";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<ApplicationForm />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer
