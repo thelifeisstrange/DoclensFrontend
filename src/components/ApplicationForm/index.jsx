@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import PersonalDetails from './PersonalDetails';
-import EducationalDetails from './EducationalDetails';
-import PreviewReport from './PreviewReport';
-import NavBar from '../NavBar/NavBar';
+import React, { useEffect, useState } from "react";
+import PersonalDetails from "./PersonalDetails";
+import EducationalDetails from "./EducationalDetails";
+import PreviewReport from "./PreviewReport";
+import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 
 const ApplicationForm = () => {
@@ -20,34 +20,34 @@ const ApplicationForm = () => {
 
   const [formData, setFormData] = useState({
     // Personal Details
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    dob: '',
-    adhaar: '',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    dob: "",
+    adhaar: "",
     adhaarFile: null,
-    adhaarLink:null,
+    adhaarLink: null,
     adhaarVerified: false,
-    
+
     // Educational Details
-    class10School: '',
-    class10Percentage: '',
+    class10School: "",
+    class10Percentage: "",
     class10Marksheet: null,
     class10Link: false,
     class10Verified: false,
-    
-    class12College: '',
-    class12Percentage: '',
+
+    class12College: "",
+    class12Percentage: "",
     class12Marksheet: null,
     class12Link: null,
     class12Verified: false,
-    
-    bachelorsUniversity: '',
-    bachelorsPercentage: '',
+
+    bachelorsUniversity: "",
+    bachelorsPercentage: "",
     bachelorsMarksheet: null,
     bachelorsLink: null,
-    bachelorsVerified: false
+    bachelorsVerified: false,
   });
 
   // const handleInputChange = (e) => {
@@ -60,21 +60,21 @@ const ApplicationForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    
+
     // if (files) {
     //   console.log(`Uploading document type: ${documentType}`);
     //   // You can perform document-specific validation here
     // }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value
+      [name]: files ? files[0] : value,
     }));
   };
 
-  const handleVerify = (documentType) => {
+  const handleVerify = async (documentType) => {
     // console.log(`Verifying document type: ${documentType}`);
-    
+
     // // Map document types to their corresponding verification fields
     // const verificationFields = {
     //   'adhaar': 'adhaarVerified',
@@ -93,33 +93,156 @@ const ApplicationForm = () => {
 
     // const verificationField = verificationFields[documentType];
     // const fileField = fileFields[documentType];
+    const file = new FormData();
 
-      switch (documentType) {
-        case 'adhaar':
-          // Verify Adhaar specific format/details
+    switch (documentType) {
+      case "adhaar":
+        // Verify Adhaar specific format/details
+        file.append("image", formData.adhaarFile); // Append the file with the key 'image'
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/verification/upload-image/",
+            {
+              method: "POST",
+              body: file,
+            }
+          );
+          const data = await response.json()
+          console.log("Verifying Adhaar document...", data.file_path);
+        const res = await fetch("http://localhost:8000/verification/aadhaar/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            adhaar_number: formData.adhaar,
+            dob: formData.dob,
+            link: data.file_path,
+          }),
+        });
+        const d = await res.json();
+        setFormData((prev) => ({
+          ...prev,
+          adhaarVerified: d.verified,
+          adhaarLink: data.file_path,
+        }));
+        } catch (error) {
+          console.log(error);
+        }
+        break;
 
-          console.log('Verifying Adhaar document...',formData.adhaarFile);
-          break;
-        case 'x':
-          // Verify Class X marksheet format/details
-          console.log('Verifying Class X marksheet...');
-          break;
-        case 'xii':
-          // Verify Class XII marksheet format/details
-          console.log('Verifying Class XII marksheet...');
-          break;
-        case 'b':
-          // Verify Bachelors marksheet format/details
-          console.log('Verifying Bachelors marksheet...', formData.bachelorsMarksheet);
-          break;
-        default:
-          console.log('Unknown document type',documentType);
-      }
 
-      // setFormData(prev => ({
-      //   ...prev,
-      //   [verificationField]: true
-      // }));
+      case "x":
+        // Verify Class X marksheet format/details
+        file.append("image", formData.class10Marksheet); // Append the file with the key 'image'
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/verification/upload-image/",
+            {
+              method: "POST",
+              body: file,
+            }
+          );
+          const data = await response.json();
+          console.log("Verifying 10th document...", data.file_path);
+          const res = await fetch(
+            "http://localhost:8000/verification/marksheet/",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: formData.name,
+                percentage: formData.class10Percentage,
+                link: data.file_path,
+              }),
+            }
+          );;
+          const d = await res.json();
+          setFormData((prev) => ({
+            ...prev,
+            class10Verified: d.verified,
+            class10Link: data.file_path
+          }));
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case "xii":
+        // Verify Class XII marksheet format/details
+        file.append("image", formData.adhaarFile); // Append the file with the key 'image'
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/verification/upload-image/",
+            {
+              method: "POST",
+              body: file,
+            }
+          );
+          const data = await response.json();
+          console.log("Verifying 12th document...", data.file_path);
+          const res = await fetch(
+            "http://localhost:8000/verification/marksheet/",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: formData.name,
+                percentage: formData.class12Percentage,
+                link: data.file_path,
+              }),
+            }
+          );
+          const d = await res.json();
+          setFormData((prev) => ({
+            ...prev,
+            class12Verified: d.verified,
+            class12Link: data.file_path,
+          }));
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      case "b":
+        // Verify Bachelors marksheet format/details
+        file.append("image", formData.adhaarFile); // Append the file with the key 'image'
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/verification/upload-image/",
+            {
+              method: "POST",
+              body: file,
+            }
+          );
+          const data = await response.json();
+          const res = await fetch(
+            "http://localhost:8000/verification/marksheet/",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: formData.name,
+                percentage: formData.bachelorsPercentage,
+                link: data.file_path,
+              }),
+            }
+          );
+          const d = await res.json();
+          setFormData((prev) => ({
+            ...prev,
+            bachelorsVerified: d.verified,
+            bachelorsLink: data.file_path,
+          }));
+        } catch (error) {
+          console.log(error);
+        }
+        break;
+      default:
+        console.log("Unknown document type", documentType);
+    }
+
+    // setFormData(prev => ({
+    //   ...prev,
+    //   [verificationField]: true
+    // }));
   };
 
   return (
@@ -128,52 +251,65 @@ const ApplicationForm = () => {
       <div className="card animate-fade-in">
         <div className="steps">
           {[1, 2, 3].map((s) => (
-            <div key={s} className={`step-indicator ${step >= s ? 'active' : ''}`} />
+            <div
+              key={s}
+              className={`step-indicator ${step >= s ? "active" : ""}`}
+            />
           ))}
         </div>
 
         <h2 className="preview-title">
-          {step === 1 ? "Personal Details" : 
-           step === 2 ? "Educational Details" : "Application Preview"}
+          {step === 1
+            ? "Personal Details"
+            : step === 2
+            ? "Educational Details"
+            : "Application Preview"}
         </h2>
 
         {step === 1 && (
-          <PersonalDetails 
-            formData={formData} 
+          <PersonalDetails
+            formData={formData}
             handleInputChange={handleInputChange}
             handleVerify={handleVerify}
           />
         )}
         {step === 2 && (
-          <EducationalDetails 
-            formData={formData} 
+          <EducationalDetails
+            formData={formData}
             handleInputChange={handleInputChange}
             handleVerify={handleVerify}
           />
         )}
-        {step === 3 && (
-          <PreviewReport formData={formData} />
-        )}
+        {step === 3 && <PreviewReport formData={formData} />}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "2rem",
+          }}
+        >
           {step > 1 && (
-            <button className="button button-outline" onClick={() => setStep(step - 1)}>
+            <button
+              className="button button-outline"
+              onClick={() => setStep(step - 1)}
+            >
               Previous
             </button>
           )}
           {step < 3 ? (
-            <button 
-              className="button button-primary" 
-              onClick={() => setStep(step + 1)} 
-              style={{ marginLeft: 'auto' }}
+            <button
+              className="button button-primary"
+              onClick={() => setStep(step + 1)}
+              style={{ marginLeft: "auto" }}
             >
               Next
             </button>
           ) : (
-            <button 
-              className="button button-primary" 
-              onClick={() => console.log('Form submitted:', formData)} 
-              style={{ marginLeft: 'auto' }}
+            <button
+              className="button button-primary"
+              onClick={() => console.log("Form submitted:", formData)}
+              style={{ marginLeft: "auto" }}
             >
               Submit Application
             </button>
