@@ -8,6 +8,7 @@ import SignupPage from "./components/AuthPages/SignupPage";
 import NavBar from "./components/NavBar/NavBar";
 import { ToastContainer } from "react-toastify";
 import AdminDashboard from "./Dashboards/AdminDashboard";
+import BatchUpload from "./components/ApplicationForm/BatchUpload";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/batchprocess" element={<BatchUpload />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer
