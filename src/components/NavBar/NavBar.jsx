@@ -9,6 +9,7 @@ const NavBar = () => {
       </div>
       <div className="navbar-links">
         <button className="logout-button">Logout</button>
+        <img src={logo} alt="DRDO Careers Logo" className="profile-img" />
       </div>
     </nav>
   );

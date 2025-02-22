@@ -6,8 +6,17 @@
     --error-color: #ef4444;
     --success-color: #22c55e;
     --text-color: #1f2937;
+    --label-color: #474747;
     --border-color: #e5e7eb;
+    --placeholder-color: #aaaaaa;
   }
+
+.inter-interFont {
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
   
   * {
     margin: 0;
@@ -16,7 +25,7 @@
   }
   
   body {
-    font-family: Arial, sans-serif;
+    font-family: Inter, Arial, sans-serif;
     background: linear-gradient(135deg, var(--background-color) 0%, #ffffff 100%);
     min-height: 100vh;
     padding: 20px;
@@ -50,7 +59,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--label-color);
   }
   
   .form-input {
@@ -61,6 +70,10 @@
     font-size: 1rem;
     transition: all 0.3s ease;
   }
+
+  .form-input::placeholder {
+      color: var(--placeholder-color);
+    }
   
   .form-input:focus {
     outline: none;

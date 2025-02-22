@@ -21,13 +21,15 @@
     gap: 16px;
 }
 
-.logo-img {
+.profile-img {
     height: 32px;
+    width: 32px;
+    border-radius: 16px;
 }
 
 .navbar-title {
-    font-size: 1.125rem;
-    font-weight: bold;
+    font-size: 1.5rem;
+    font-weight: 500;
 }
 
 .navbar-links {
