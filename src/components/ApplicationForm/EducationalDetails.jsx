@@ -37,7 +37,10 @@ const EducationSection = ({ title, formData, schoolField, percentageField, fileF
           verified={formData[verifiedField]}
           handleInputChange={handleInputChange}
           handleVerify={handleVerify}
-        />
+        />       
+          {!formData.EducationSectio && formData[fileField] && (
+            <p style={{ color: 'red' }}>Verification failed. Please check the details and try again.</p>
+          )}
       </div>
     </div>
   </div>

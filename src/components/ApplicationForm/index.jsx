@@ -4,6 +4,7 @@ import EducationalDetails from "./EducationalDetails";
 import PreviewReport from "./PreviewReport";
 import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
+import {toast} from 'react-toastify';
 
 const ApplicationForm = () => {
   const [step, setStep] = useState(1);
@@ -121,6 +122,20 @@ const ApplicationForm = () => {
           }),
         });
         const d = await res.json();
+        console.log(d.result['name'])
+        console.log(d.result['adhaar_number'])
+        if (!d.result['name']&& d.result['adhaar_number']) {
+          toast.error("Name and number verification failed");
+        }
+        else if (!formData.name) {
+          toast.error("Name verification failed");
+        }
+        else if (!formData.adhaar) {
+          toast.error("Number verification failed");
+        }
+        else{
+          toast.success("Adhaar verification successful");
+        }
         setFormData((prev) => ({
           ...prev,
           adhaarVerified: d.verified,
@@ -158,6 +173,15 @@ const ApplicationForm = () => {
             }
           );;
           const d = await res.json();
+          if (!d.verified.name && !d.verified.percentage) {
+            toast.error("Name and percentage verification failed");
+          }
+          else if (!d.verified.name) {
+            toast.error("Name verification failed");
+          }
+          else if(!d.verified.percentage) {
+            toast.error("Percentage verification failed");
+          }
           setFormData((prev) => ({
             ...prev,
             class10Verified: d.verified,
@@ -193,6 +217,9 @@ const ApplicationForm = () => {
             }
           );
           const d = await res.json();
+          if (!d.verified) {
+            alert("Class X marksheet verification failed. Please check the details and try again.");
+          }
           setFormData((prev) => ({
             ...prev,
             class12Verified: d.verified,
@@ -227,6 +254,9 @@ const ApplicationForm = () => {
             }
           );
           const d = await res.json();
+          if (!d.verified) {
+            alert("bachlores result verfication failed. Please check the details and try again.");
+          }
           setFormData((prev) => ({
             ...prev,
             bachelorsVerified: d.verified,
