@@ -4,6 +4,8 @@ import EducationalDetails from "./EducationalDetails";
 import PreviewReport from "./PreviewReport";
 import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
+import {toast} from 'react-toastify';
+import ThankyouPage from "./ThankyouPage";
 
 const ApplicationForm = () => {
   const [step, setStep] = useState(1);
@@ -96,6 +98,8 @@ const ApplicationForm = () => {
     // const fileField = fileFields[documentType];
     const file = new FormData();
 
+    
+
     switch (documentType) {
       case "adhaar":
         // Verify Adhaar specific format/details
@@ -121,6 +125,20 @@ const ApplicationForm = () => {
           }),
         });
         const d = await res.json();
+        console.log(d.result['name'])
+        console.log(d.result['adhaar_number'])
+        if (d.result['name'] ==false && d.result['adhaar_number']==false) {
+          toast.error("Name and adhaar number verification failed");
+        }
+        else if (d.result['name']==false) {
+          toast.error("Name verification failed");
+        }
+        else if (d.result['adhaar_number']==false) {
+          toast.error("Adhaar Number verification failed");
+        }
+        else{
+          toast.success("Adhaar verification successful");
+        }
         setFormData((prev) => ({
           ...prev,
           adhaarVerified: d.verified,
@@ -158,6 +176,17 @@ const ApplicationForm = () => {
             }
           );;
           const d = await res.json();
+          console.log(d.result['name'])
+          console.log(d.result['percentage']);
+          if (d.result['name']==false && d.result['percentage']==false) {
+            toast.error("Name and percentage verification failed");
+          }
+          else if (d.result['name']==false) {
+            toast.error("Name verification failed");
+          }
+          else if(d.result['percentage']==false) {
+            toast.error("Percentage verification failed");
+          }
           setFormData((prev) => ({
             ...prev,
             class10Verified: d.verified,
@@ -193,6 +222,17 @@ const ApplicationForm = () => {
             }
           );
           const d = await res.json();
+          console.log(d.result['name'])
+          console.log(d.result['percentage']);
+          if (d.result['name']==false && d.result['percentage']==false) {
+            toast.error("Name and percentage verification failed");
+          }
+          else if (d.result['name']==false) {
+            toast.error("Name verification failed");
+          }
+          else if(d.result['percentage']==false) {
+            toast.error("Percentage verification failed");
+          }
           setFormData((prev) => ({
             ...prev,
             class12Verified: d.verified,
@@ -227,6 +267,17 @@ const ApplicationForm = () => {
             }
           );
           const d = await res.json();
+          console.log(d.result['name'])
+          console.log(d.result['percentage']);
+          if (d.result['name']==false && d.result['percentage']==false) {
+            toast.error("Name and percentage verification failed");
+          }
+          else if (d.result['name']==false) {
+            toast.error("Name verification failed");
+          }
+          else if(d.result['percentage']==false) {
+            toast.error("Percentage verification failed");
+          }
           setFormData((prev) => ({
             ...prev,
             bachelorsVerified: d.verified,
@@ -239,6 +290,7 @@ const ApplicationForm = () => {
       default:
         console.log("Unknown document type", documentType);
     }
+    
 
     // setFormData(prev => ({
     //   ...prev,
@@ -246,12 +298,19 @@ const ApplicationForm = () => {
     // }));
   };
 
+  const isFormVerified = 
+      formData.adhaarVerified &&
+      formData.class10Verified &&
+      formData.class12Verified &&
+      formData.bachelorsVerified
+   
+
   return (
     <div className="container">
       <NavBar />
       <div className="card animate-fade-in">
         <div className="steps">
-          {[1, 2, 3].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
               className={`step-indicator ${step >= s ? "active" : ""}`}
@@ -264,7 +323,9 @@ const ApplicationForm = () => {
             ? "Personal Details"
             : step === 2
             ? "Educational Details"
-            : "Application Preview"}
+            : step === 3
+            ? "Application Preview"
+            : "Application Submitted"}
         </h2>
 
         {step === 1 && (
@@ -282,6 +343,7 @@ const ApplicationForm = () => {
           />
         )}
         {step === 3 && <PreviewReport formData={formData} />}
+        {step === 4 && <ThankyouPage />}
 
         <div
           style={{
@@ -309,12 +371,29 @@ const ApplicationForm = () => {
           ) : (
             <button
               className="button button-primary"
-              onClick={() => console.log("Form submitted:", formData)}
+              onClick={() => {
+                if (isFormVerified) {
+                  setStep(step + 1); // Submit or proceed if everything is verified
+                } else {
+                  toast.error("All details must be verified before submitting");
+                }
+              }}
               style={{ marginLeft: "auto" }}
             >
               Submit Application
             </button>
           )}
+          {step < 4 ? (
+            <div>
+              <button
+                className="button button-outline"
+                onClick={() => setStep(step +1)}
+                style={{ marginLeft: "1rem" }}
+              >
+                Request Manual Verification
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
