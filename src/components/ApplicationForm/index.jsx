@@ -5,6 +5,7 @@ import PreviewReport from "./PreviewReport";
 import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify';
+import ThankyouPage from "./ThankyouPage";
 
 const ApplicationForm = () => {
   const [step, setStep] = useState(1);
@@ -297,12 +298,19 @@ const ApplicationForm = () => {
     // }));
   };
 
+  const isFormVerified = 
+      formData.adhaarVerified &&
+      formData.class10Verified &&
+      formData.class12Verified &&
+      formData.bachelorsVerified
+   
+
   return (
     <div className="container">
       <NavBar />
       <div className="card animate-fade-in">
         <div className="steps">
-          {[1, 2, 3].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
               className={`step-indicator ${step >= s ? "active" : ""}`}
@@ -315,7 +323,9 @@ const ApplicationForm = () => {
             ? "Personal Details"
             : step === 2
             ? "Educational Details"
-            : "Application Preview"}
+            : step === 3
+            ? "Application Preview"
+            : "Application Submitted"}
         </h2>
 
         {step === 1 && (
@@ -333,6 +343,7 @@ const ApplicationForm = () => {
           />
         )}
         {step === 3 && <PreviewReport formData={formData} />}
+        {step === 4 && <ThankyouPage />}
 
         <div
           style={{
@@ -360,12 +371,29 @@ const ApplicationForm = () => {
           ) : (
             <button
               className="button button-primary"
-              onClick={() => console.log("Form submitted:", formData)}
+              onClick={() => {
+                if (isFormVerified) {
+                  setStep(step + 1); // Submit or proceed if everything is verified
+                } else {
+                  toast.error("All details must be verified before submitting");
+                }
+              }}
               style={{ marginLeft: "auto" }}
             >
               Submit Application
             </button>
           )}
+          {step < 4 ? (
+            <div>
+              <button
+                className="button button-outline"
+                onClick={() => setStep(step +1)}
+                style={{ marginLeft: "1rem" }}
+              >
+                Request Manual Verification
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
