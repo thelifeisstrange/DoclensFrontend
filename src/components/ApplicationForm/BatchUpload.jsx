@@ -28,6 +28,28 @@ const BatchUpload = () => {
   const [status, setStatus] = useState(null);
   const [finalData, setFinalData] = useState([]);
 
+  // Function to handle fetch requests with automatic retry on 403
+  const fetchWithRetry = async (url, options, retryCount = 5) => {
+    try {
+      const response = await fetch(url, options);
+
+      // If response is 403, retry the request once
+      if (response.status === 403 && retryCount > 0) {
+        console.log(`Received 403, retrying request to ${url}...`);
+        return fetchWithRetry(url, options, retryCount - 1);
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error;
+    }
+  };
+
   const handleUpload = () => {
     if (type.length === 0) {
       toast.error("select a type aadhaar,gate,marksheet");
@@ -43,21 +65,29 @@ const BatchUpload = () => {
         .then((response) => response.json())
         .then((data) => {
           setLinks((l) => [...l, data.file_path]); // Append response immediately
-          return fetch("http://127.0.0.1:8000/verification/extract_data/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ link: data.file_path, type }),
-          });
+
+          // Use the fetchWithRetry function for the second request
+          return fetchWithRetry(
+            "http://127.0.0.1:8000/verification/extract_data/",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ link: data.file_path, type }),
+            }
+          );
         })
-        .then((response2) => response2.json())
         .then((data2) => {
           setFinalData((l) => [...l, data2]);
           console.log(data2);
         })
-        .catch((error) => console.error("Fetch error:", error));
+        .catch((error) => {
+          console.error("Process error:", error);
+          toast.error("Failed to process document");
+        });
     });
     console.log(links);
   };
+
   return (
     <Stack
       paddingX={"100px"}
