@@ -13,7 +13,7 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 
 const BatchUpload = () => {
@@ -83,21 +83,21 @@ const BatchUpload = () => {
               console.log(Array.from(e.target.files));
             }}
           />
-            <FormControl sx={{width:'25%'}}>
-              <InputLabel id="type-label">Type of Doc</InputLabel>
-              <Select
-                labelId="type-label"
-                id="type"
-                value={type}
-                label="Type of Doc"
-                onChange={(e) => {
-                  setType(e.target.value);
-                }}
-              >
-                <MenuItem value={"aadhaar"}>Aadhaar</MenuItem>
-                <MenuItem value={"marksheet"}>Marksheet</MenuItem>
-              </Select>
-            </FormControl>
+          <FormControl sx={{ width: "25%" }}>
+            <InputLabel id="type-label">Type of Doc</InputLabel>
+            <Select
+              labelId="type-label"
+              id="type"
+              value={type}
+              label="Type of Doc"
+              onChange={(e) => {
+                setType(e.target.value);
+              }}
+            >
+              <MenuItem value={"aadhaar"}>Aadhaar</MenuItem>
+              <MenuItem value={"marksheet"}>Marksheet</MenuItem>
+            </Select>
+          </FormControl>
           <Button
             onClick={handleUpload}
             variant="contained"
@@ -120,8 +120,8 @@ const BatchUpload = () => {
           <Stack direction={"row"} justifyContent={"space-between"}>
             <Typography variant="h4">Extracted Data:</Typography>
             <Button
-              color='error'
-              variant='outlined'
+              color="error"
+              variant="outlined"
               onClick={() => {
                 setFinalData([]);
                 setLinks([]);
@@ -150,16 +150,27 @@ const BatchUpload = () => {
                 key={i}
                 sx={{ display: "flex", padding: "10px", height: "200px" }}
               >
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <CardMedia
+                  component="img"
+                  image={"http://localhost:8000/" + data.link}
+                  alt={"No preview available."}
+                  style={{
+                    width: "130px", // Set your desired width
+                    height: "180px", // Set your desired height
+                    objectFit: "cover", // Optional: controls the image fitting behavior
+                  }}
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    marginLeft: "20px",
+                  }}
+                >
                   <Typography component="div" variant="h5">
                     <pre>{JSON.stringify(data.data, null, 2)}</pre>
                   </Typography>
                 </Box>
-                {/* <CardMedia
-                component="img"
-                image={data.link}
-                alt={data.link}
-              /> */}
               </Card>
               // </Stack>
             );
