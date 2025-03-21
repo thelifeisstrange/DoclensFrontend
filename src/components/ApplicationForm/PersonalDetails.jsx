@@ -65,16 +65,53 @@ const PersonalDetails = ({ formData, handleInputChange, handleVerify }) => {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Address</label>
+          <label className="form-label">House Name/Number</label>
           <input
             type="text"
-            name="address"
-            value={formData.address}
+            name="housenumber"
+            value={formData.housenumber}
             onChange={handleInputChange}
             className="form-input"
-            placeholder="Enter your address"
+            placeholder="Enter your House Name/Number"
           />
         </div>
+
+        <div className="form-group">
+          <label className="form-label">City</label>
+          <input
+            type="text"
+            name="city"
+            value={formData.city}
+            onChange={handleInputChange}
+            className="form-input"
+            placeholder="Enter your City Name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">State</label>
+          <input
+            type="text"
+            name="state"
+            value={formData.state}
+            onChange={handleInputChange}
+            className="form-input"
+            placeholder="Enter your State"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Pincode</label>
+          <input
+            type="text"
+            name="pincode"
+            value={formData.pincode}
+            onChange={handleInputChange}
+            className="form-input"
+            placeholder="Enter your Pincode"
+          />
+        </div>
+        
 
         <div className="form-group" style={{ gridColumn: '1 / -1' }}>
           <FileUploadField
