@@ -28,6 +28,10 @@ const ApplicationForm = () => {
     address: "",
     dob: "",
     adhaar: "",
+    housenumber: "",
+    city: "",
+    state: "",
+    pincode: "",
     adhaarFile: null,
     adhaarLink: null,
     adhaarVerified: false,
@@ -121,22 +125,35 @@ const ApplicationForm = () => {
             name: formData.name,
             adhaar_number: formData.adhaar,
             dob: formData.dob,
+            housenumber: formData.housenumber,
+            city: formData.city,
+            state: formData.state,
+            pincode: formData.pincode,
             link: data.file_path,
           }),
         });
         const d = await res.json();
-        console.log(d.result['name'])
-        console.log(d.result['adhaar_number'])
-        if (d.result['name'] ==false && d.result['adhaar_number']==false) {
+        console.log(d.result['name']);
+        console.log(d.result['adhaar_number']);
+        console.log(d.result['housenumber']);
+        console.log(d.result['city']);
+        console.log(d.result['state']);
+        console.log(d.result['pincode']);
+        
+        if (d.result['name'] == false && d.result['adhaar_number'] == false) {
           toast.error("Name and adhaar number verification failed");
-        }
-        else if (d.result['name']==false) {
+        } else if (d.result['name'] == false) {
           toast.error("Name verification failed");
-        }
-        else if (d.result['adhaar_number']==false) {
+        } else if (d.result['adhaar_number'] == false) {
           toast.error("Adhaar Number verification failed");
-        }
-        else{
+        } else if (
+          d.result['housenumber'] == false ||
+          d.result['city'] == false ||
+          d.result['state'] == false ||
+          d.result['pincode'] == false
+        ) {
+          toast.error("Address verification failed");
+        } else {
           toast.success("Adhaar verification successful");
         }
         setFormData((prev) => ({
@@ -352,7 +369,7 @@ const ApplicationForm = () => {
             marginTop: "2rem",
           }}
         >
-          {step > 1 && (
+          {step > 1 && step < 4 && (
             <button
               className="button button-outline"
               onClick={() => setStep(step - 1)}
@@ -360,7 +377,7 @@ const ApplicationForm = () => {
               Previous
             </button>
           )}
-          {step < 3 ? (
+          {step < 3 && (
             <button
               className="button button-primary"
               onClick={() => setStep(step + 1)}
@@ -368,7 +385,8 @@ const ApplicationForm = () => {
             >
               Next
             </button>
-          ) : (
+          )}
+          {step === 3 && (
             <button
               className="button button-primary"
               onClick={() => {
