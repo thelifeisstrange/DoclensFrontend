@@ -4,7 +4,7 @@ import EducationalDetails from "./EducationalDetails";
 import PreviewReport from "./PreviewReport";
 import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
-import {toast} from 'react-toastify';
+import { toast } from "react-toastify";
 import ThankyouPage from "./ThankyouPage";
 
 const ApplicationForm = () => {
@@ -19,6 +19,28 @@ const ApplicationForm = () => {
       navigate("/login", { replace: true });
     }
   }, [navigate]);
+
+  // Function to handle fetch requests with automatic retry on 403
+  const fetchWithRetry = async (url, options, retryCount = 5) => {
+    try {
+      const response = await fetch(url, options);
+
+      // If response is 403, retry the request once
+      if (response.status === 403 && retryCount > 0) {
+        console.log(`Received 403, retrying request to ${url}...`);
+        return fetchWithRetry(url, options, retryCount - 1);
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error;
+    }
+  };
 
   const [formData, setFormData] = useState({
     // Personal Details
@@ -64,8 +86,7 @@ const ApplicationForm = () => {
   //   }));
   // };
 
-  const 
-  handleInputChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
     // if (files) {
@@ -102,8 +123,6 @@ const ApplicationForm = () => {
     // const fileField = fileFields[documentType];
     const file = new FormData();
 
-    
-
     switch (documentType) {
       case "adhaar":
         // Verify Adhaar specific format/details
@@ -118,54 +137,58 @@ const ApplicationForm = () => {
           );
           const data = await response.json()
           console.log("Verifying Adhaar document...", data.file_path);
-        const res = await fetch("http://localhost:8000/verification/aadhaar/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: formData.name,
-            adhaar_number: formData.adhaar,
-            dob: formData.dob,
-            housenumber: formData.housenumber,
-            city: formData.city,
-            state: formData.state,
-            pincode: formData.pincode,
-            link: data.file_path,
-          }),
-        });
-        const d = await res.json();
-        console.log(d.result['name']);
-        console.log(d.result['adhaar_number']);
-        console.log(d.result['housenumber']);
-        console.log(d.result['city']);
-        console.log(d.result['state']);
-        console.log(d.result['pincode']);
-        
-        if (d.result['name'] == false && d.result['adhaar_number'] == false) {
-          toast.error("Name and adhaar number verification failed");
-        } else if (d.result['name'] == false) {
-          toast.error("Name verification failed");
-        } else if (d.result['adhaar_number'] == false) {
-          toast.error("Adhaar Number verification failed");
-        } else if (
-          d.result['housenumber'] == false ||
-          d.result['city'] == false ||
-          d.result['state'] == false ||
-          d.result['pincode'] == false
-        ) {
-          toast.error("Address verification failed");
-        } else {
-          toast.success("Adhaar verification successful");
-        }
-        setFormData((prev) => ({
-          ...prev,
-          adhaarVerified: d.verified,
-          adhaarLink: data.file_path,
-        }));
+
+          const d = await fetchWithRetry(
+            "http://localhost:8000/verification/aadhaar/",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: formData.name,
+                adhaar_number: formData.adhaar,
+                dob: formData.dob,
+                housenumber: formData.housenumber,
+                city: formData.city,
+                state: formData.state,
+                pincode: formData.pincode,
+                link: data.file_path,
+              }),
+            }
+          );
+
+          console.log(d.result["name"]);
+          console.log(d.result["adhaar_number"]);
+          console.log(d.result["housenumber"]);
+          console.log(d.result["city"]);
+          console.log(d.result["state"]);
+          console.log(d.result["pincode"]);
+
+          if (d.result["name"] == false && d.result["adhaar_number"] == false) {
+            toast.error("Name and adhaar number verification failed");
+          } else if (d.result["name"] == false) {
+            toast.error("Name verification failed");
+          } else if (d.result["adhaar_number"] == false) {
+            toast.error("Adhaar Number verification failed");
+          } else if (
+            d.result["housenumber"] == false ||
+            d.result["city"] == false ||
+            d.result["state"] == false ||
+            d.result["pincode"] == false
+          ) {
+            toast.error("Address verification failed");
+          } else {
+            toast.success("Adhaar verification successful");
+          }
+          setFormData((prev) => ({
+            ...prev,
+            adhaarVerified: d.verified,
+            adhaarLink: data.file_path,
+          }));
         } catch (error) {
           console.log(error);
+          toast.error("Adhaar verification failed. Please try again.");
         }
         break;
-
 
       case "x":
         // Verify Class X marksheet format/details
@@ -180,7 +203,8 @@ const ApplicationForm = () => {
           );
           const data = await response.json();
           console.log("Verifying 10th document...", data.file_path);
-          const res = await fetch(
+
+          const d = await fetchWithRetry(
             "http://localhost:8000/verification/marksheet/",
             {
               method: "POST",
@@ -189,28 +213,32 @@ const ApplicationForm = () => {
                 name: formData.name,
                 percentage: formData.class10Percentage,
                 link: data.file_path,
+                dob: formData.dob,
               }),
             }
-          );;
-          const d = await res.json();
-          console.log(d.result['name'])
-          console.log(d.result['percentage']);
-          if (d.result['name']==false && d.result['percentage']==false) {
+          );
+
+          console.log(d.result["name"]);
+          console.log(d.result["percentage"]);
+          if (d.result["name"] == false && d.result["percentage"] == false) {
             toast.error("Name and percentage verification failed");
-          }
-          else if (d.result['name']==false) {
+          } else if (d.result["name"] == false) {
             toast.error("Name verification failed");
-          }
-          else if(d.result['percentage']==false) {
+          } else if (d.result["percentage"] == false) {
             toast.error("Percentage verification failed");
+          } else {
+            toast.success("Class 10 marksheet verification successful");
           }
           setFormData((prev) => ({
             ...prev,
             class10Verified: d.verified,
-            class10Link: data.file_path
+            class10Link: data.file_path,
           }));
         } catch (error) {
           console.log(error);
+          toast.error(
+            "Class 10 marksheet verification failed. Please try again."
+          );
         }
         break;
       case "xii":
@@ -226,7 +254,8 @@ const ApplicationForm = () => {
           );
           const data = await response.json();
           console.log("Verifying 12th document...", data.file_path);
-          const res = await fetch(
+
+          const d = await fetchWithRetry(
             "http://localhost:8000/verification/marksheet/",
             {
               method: "POST",
@@ -238,17 +267,17 @@ const ApplicationForm = () => {
               }),
             }
           );
-          const d = await res.json();
-          console.log(d.result['name'])
-          console.log(d.result['percentage']);
-          if (d.result['name']==false && d.result['percentage']==false) {
+
+          console.log(d.result["name"]);
+          console.log(d.result["percentage"]);
+          if (d.result["name"] == false && d.result["percentage"] == false) {
             toast.error("Name and percentage verification failed");
-          }
-          else if (d.result['name']==false) {
+          } else if (d.result["name"] == false) {
             toast.error("Name verification failed");
-          }
-          else if(d.result['percentage']==false) {
+          } else if (d.result["percentage"] == false) {
             toast.error("Percentage verification failed");
+          } else {
+            toast.success("Class 12 marksheet verification successful");
           }
           setFormData((prev) => ({
             ...prev,
@@ -257,6 +286,9 @@ const ApplicationForm = () => {
           }));
         } catch (error) {
           console.log(error);
+          toast.error(
+            "Class 12 marksheet verification failed. Please try again."
+          );
         }
         break;
       case "b":
@@ -271,7 +303,9 @@ const ApplicationForm = () => {
             }
           );
           const data = await response.json();
-          const res = await fetch(
+
+
+          const d = await fetchWithRetry(
             "http://localhost:8000/verification/marksheet/",
             {
               method: "POST",
@@ -283,17 +317,17 @@ const ApplicationForm = () => {
               }),
             }
           );
-          const d = await res.json();
-          console.log(d.result['name'])
-          console.log(d.result['percentage']);
-          if (d.result['name']==false && d.result['percentage']==false) {
+
+          console.log(d.result["name"]);
+          console.log(d.result["percentage"]);
+          if (d.result["name"] == false && d.result["percentage"] == false) {
             toast.error("Name and percentage verification failed");
-          }
-          else if (d.result['name']==false) {
+          } else if (d.result["name"] == false) {
             toast.error("Name verification failed");
-          }
-          else if(d.result['percentage']==false) {
+          } else if (d.result["percentage"] == false) {
             toast.error("Percentage verification failed");
+          } else {
+            toast.success("Bachelor's marksheet verification successful");
           }
           setFormData((prev) => ({
             ...prev,
@@ -302,12 +336,14 @@ const ApplicationForm = () => {
           }));
         } catch (error) {
           console.log(error);
+          toast.error(
+            "Bachelor's marksheet verification failed. Please try again."
+          );
         }
         break;
       default:
         console.log("Unknown document type", documentType);
     }
-    
 
     // setFormData(prev => ({
     //   ...prev,
@@ -315,12 +351,11 @@ const ApplicationForm = () => {
     // }));
   };
 
-  const isFormVerified = 
-      formData.adhaarVerified &&
-      formData.class10Verified &&
-      formData.class12Verified &&
-      formData.bachelorsVerified
-   
+  const isFormVerified =
+    formData.adhaarVerified &&
+    formData.class10Verified &&
+    formData.class12Verified &&
+    formData.bachelorsVerified;
 
   return (
     <div className="container">
@@ -405,7 +440,7 @@ const ApplicationForm = () => {
             <div>
               <button
                 className="button button-outline"
-                onClick={() => setStep(step +1)}
+                onClick={() => setStep(step + 1)}
                 style={{ marginLeft: "1rem" }}
               >
                 Request Manual Verification
