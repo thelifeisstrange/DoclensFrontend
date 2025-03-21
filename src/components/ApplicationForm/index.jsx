@@ -6,6 +6,7 @@ import NavBar from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify';
 import ThankyouPage from "./ThankyouPage";
+import AgeProof from "./AgeProof";
 
 const ApplicationForm = () => {
   const [step, setStep] = useState(1);
@@ -54,6 +55,11 @@ const ApplicationForm = () => {
     bachelorsMarksheet: null,
     bachelorsLink: null,
     bachelorsVerified: false,
+
+    pannumber: "",
+    panFile: null,
+    panLink: null,
+    panVerified: false,
   });
 
   // const handleInputChange = (e) => {
@@ -204,6 +210,9 @@ const ApplicationForm = () => {
           else if(d.result['percentage']==false) {
             toast.error("Percentage verification failed");
           }
+          else {
+            toast.success("X Marksheet verification successful");
+          }
           setFormData((prev) => ({
             ...prev,
             class10Verified: d.verified,
@@ -250,6 +259,9 @@ const ApplicationForm = () => {
           else if(d.result['percentage']==false) {
             toast.error("Percentage verification failed");
           }
+          else {
+            toast.success("XII Marksheet verification successful");
+          }
           setFormData((prev) => ({
             ...prev,
             class12Verified: d.verified,
@@ -295,6 +307,9 @@ const ApplicationForm = () => {
           else if(d.result['percentage']==false) {
             toast.error("Percentage verification failed");
           }
+          else {
+            toast.success("Bachelors Marksheet verification successful");
+          }
           setFormData((prev) => ({
             ...prev,
             bachelorsVerified: d.verified,
@@ -304,7 +319,57 @@ const ApplicationForm = () => {
           console.log(error);
         }
         break;
-      default:
+        case "pan":
+          // Verify PAN specific format/details
+          file.append("image", formData.panFile); // Append the file with the key 'image'
+          try {
+            const response = await fetch(
+          "http://localhost:8000/verification/upload-image/",
+          {
+            method: "POST",
+            body: file,
+          }
+            );
+            const data = await response.json();
+            console.log("Verifying PAN document...", data.file_path);
+            const res = await fetch("http://localhost:8000/verification/pan/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            pannumber: formData.pannumber,
+            dob: formData.dob,
+            link: data.file_path,
+          }),
+            });
+            const d = await res.json();
+            console.log(d.result['pannumber']);
+            
+            if (d.result['pannumber'] == false && d.result['dob'] == false) {
+              toast.error("PAN number and DOB verification failed");
+            } else if (d.result['pannumber'] == false) {
+              toast.error("PAN Number verification failed");
+            } else if (d.result['dob'] == false) {
+              toast.error("DOB verification failed");
+            } else {
+              toast.success("PAN verification successful");
+              const dob = new Date(formData.dob);
+              const ageDifMs = Date.now() - dob.getTime();
+              const ageDate = new Date(ageDifMs); // milliseconds from epoch
+              const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+              console.log(`Age: ${age}`);
+              toast.success(`Your age is ${age}`);
+            }
+            setFormData((prev) => ({
+          ...prev,
+          panVerified: d.verified,
+          panLink: data.file_path,
+            }));
+          } catch (error) {
+            console.log(error);
+          }
+          break;
+
+        default:
         console.log("Unknown document type", documentType);
     }
     
@@ -319,7 +384,8 @@ const ApplicationForm = () => {
       formData.adhaarVerified &&
       formData.class10Verified &&
       formData.class12Verified &&
-      formData.bachelorsVerified
+      formData.bachelorsVerified && 
+      formData.pannumberVerified
    
 
   return (
@@ -327,7 +393,7 @@ const ApplicationForm = () => {
       <NavBar />
       <div className="card animate-fade-in">
         <div className="steps">
-          {[1, 2, 3, 4].map((s) => (
+          {[1, 2, 3, 4, 5].map((s) => (
             <div
               key={s}
               className={`step-indicator ${step >= s ? "active" : ""}`}
@@ -341,6 +407,8 @@ const ApplicationForm = () => {
             : step === 2
             ? "Educational Details"
             : step === 3
+            ? "Age Proof"
+            : step === 4
             ? "Application Preview"
             : "Application Submitted"}
         </h2>
@@ -359,8 +427,15 @@ const ApplicationForm = () => {
             handleVerify={handleVerify}
           />
         )}
-        {step === 3 && <PreviewReport formData={formData} />}
-        {step === 4 && <ThankyouPage />}
+        {step === 3 && (
+          <AgeProof
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleVerify={handleVerify}
+          />
+        )}
+        {step === 4 && <PreviewReport formData={formData} />}
+        {step === 5 && <ThankyouPage />}
 
         <div
           style={{
@@ -369,7 +444,7 @@ const ApplicationForm = () => {
             marginTop: "2rem",
           }}
         >
-          {step > 1 && step < 4 && (
+          {step > 1 && step < 5 && (
             <button
               className="button button-outline"
               onClick={() => setStep(step - 1)}
@@ -377,7 +452,7 @@ const ApplicationForm = () => {
               Previous
             </button>
           )}
-          {step < 3 && (
+          {step < 4 && (
             <button
               className="button button-primary"
               onClick={() => setStep(step + 1)}
@@ -386,7 +461,7 @@ const ApplicationForm = () => {
               Next
             </button>
           )}
-          {step === 3 && (
+          {step === 4 && (
             <button
               className="button button-primary"
               onClick={() => {
@@ -401,7 +476,7 @@ const ApplicationForm = () => {
               Submit Application
             </button>
           )}
-          {step < 4 ? (
+          {step < 5 ? (
             <div>
               <button
                 className="button button-outline"

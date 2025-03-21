@@ -98,6 +98,21 @@ const PreviewReport = ({ formData }) => {
           </div>
         </div>
       </div>
+
+      <div className="preview-section">
+        <h3 className="section-title">Age Proof (PAN)</h3>
+        <div className="grid grid-2">
+          <div>
+            <p className="form-label">PAN Number:</p>
+            <p>{formData.pannumber}</p>
+          </div>
+          <div>
+            <p className="form-label">PAN Card Verification:</p>
+            <VerificationStatus verified={formData.panVerified} />
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
