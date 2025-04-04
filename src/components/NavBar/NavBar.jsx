@@ -2,12 +2,16 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import profilepic from "../../assets/Logo/drdo_round_logo.jpg";
 import "./NavBar.css";
+import { useMediaQuery, useTheme } from "@mui/material";
+import HowToVoteIcon from "@mui/icons-material/HowToVote";
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -39,8 +43,23 @@ const NavBar = () => {
     navigate("/batchprocess");
   };
 
+  const navigateToExtractor = () => {
+    navigate("/extract");
+  };
+
+  const navigateToVoterID = () => {
+    navigate("/voter-id");
+  };
+
+  const navigateToVoterVerification = () => {
+    navigate("/voter");
+  };
+
   const isApplicationFormActive = location.pathname === "/";
   const isBatchProcessingActive = location.pathname === "/batchprocess";
+  const isExtractorActive = location.pathname === "/extract";
+  const isVoterIDActive = location.pathname === "/voter-id";
+  const isVoterVerificationActive = location.pathname === "/voter";
 
   return (
     <nav className="navbar">
@@ -64,6 +83,31 @@ const NavBar = () => {
         >
           Batch Processing
         </button>
+        <button
+          className={`nav-button ${
+            isExtractorActive ? "nav-button-active" : ""
+          }`}
+          onClick={navigateToExtractor}
+        >
+          Raw Data Extractor
+        </button>
+        <button
+          className={`nav-button ${isVoterIDActive ? "nav-button-active" : ""}`}
+          onClick={navigateToVoterID}
+        >
+          Voter ID
+        </button>
+        {isMobile && (
+          <button
+            className={`nav-button ${
+              isVoterVerificationActive ? "nav-button-active" : ""
+            }`}
+            onClick={navigateToVoterVerification}
+          >
+            <HowToVoteIcon sx={{ mr: 0.5 }} />
+            Voter Verification
+          </button>
+        )}
       </div>
       <div className="navbar-links">
         <div className="profile-container" ref={dropdownRef}>
